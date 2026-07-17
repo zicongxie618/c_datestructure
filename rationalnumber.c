@@ -23,6 +23,7 @@ int gcd(int m, int n)
         int temp = m % n;
         m = n;
         n = temp;
+		
     }
     return m;
 }
@@ -45,6 +46,7 @@ RatNum sub(RatNum *a,RatNum *b){
 	reduce(&c);
 	return c;
 }
+ 
 RatNum mult(RatNum *a,RatNum *b){
 	RatNum c;
 	c.denominator=a->denominator*b->denominator;
