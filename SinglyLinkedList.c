@@ -53,18 +53,7 @@ void CreateFromTail(LinkList L){
             
     }
 } 
-// 通过数组建表（供测试使用）
-void BuildList(LinkList L, int arr[], int n) {
-    Node *r = L;
-    int i;
-    for(i = 0; i < n; i++) {
-        Node *s = (Node*)malloc(sizeof(Node));
-        s->data = arr[i];
-        s->next = NULL;
-        r->next = s;
-        r = s;
-    }
-}
+
 // 单链表的插入
 int InsList(LinkList L,int i,ElemType e){
     Node*pre,*s;
@@ -110,15 +99,6 @@ int DelList(LinkList L,int i,ElemType *e){
     free(r);
     return OK;
 } 
-// 输出单链表（供测试使用）
-void PrintList(LinkList L) {
-    Node *p = L->next;
-    while (p != NULL) {
-        printf("%d ", p->data);
-        p = p->next;
-    }
-    printf("\n");
-}
 // 输出单链表的各元素（带序号）
 void PrintListWithIndex(Node *L) {
     Node *p =L->next;
@@ -311,95 +291,204 @@ Node *LocateData(LinkList L,ElemType value){
     }
     return p;
 } 
-int main() {
-	int i;
-    printf("========== 1. InitList 初始化 ==========\n");
-    LinkList L;
-    if (InitList(&L) == OK) printf("InitList 成功\n\n");
+void ClearList(LinkList L) {
+    Node *p = L->next;
+    while (p) {
+        Node *q = p->next;
+        free(p);
+        p = q;
+    }
+    L->next = NULL;
+}
 
-    printf("========== 2. InsList 插入 ==========\n");
-    int testData[] = {5, 2, 8, 1, 9, 3};
-    for (i = 0; i < 6; i++) InsList(L, i + 1, testData[i]);
-    printf("插入后: "); PrintList(L);
-    printf("期望:   5 2 8 1 9 3\n\n");
-
-    printf("========== 3. ListLength 求长度 ==========\n");
-    printf("长度 = %d (期望 6)\n\n", ListLength(L));
-
-    printf("========== 4. GetData 按序号查找 ==========\n");
-    Node *p = GetData(L, 3);
-    if (p) printf("第3个元素 = %d (期望 8)\n\n", p->data);
-
-    printf("========== 5. LocateData 按值查找 ==========\n");
-    p = LocateData(L, 9);
-    if (p) printf("查找 9 -> 找到: %d\n\n", p->data);
-
-    printf("========== 6. InsList 在第5位插入100 ==========\n");
-    InsList(L, 5, 100);
-    printf("插入后: "); PrintList(L);
-    printf("期望:   5 2 8 1 100 9 3\n\n");
-
-    printf("========== 7. DelList 删除第2个元素 ==========\n");
+void InputList(LinkList L) {
+    int n;
     ElemType e;
-    DelList(L, 4, &e);
-    printf("删除的值 = %d (期望 2)\n", e);
-    printf("删除后: "); PrintList(L);
-    printf("期望:  5 2 8 100 9 3 \n\n");
 
-    printf("========== 8. SortList 按值排序 ==========\n");
-    SortList(L);
-    printf("排序后: "); PrintList(L);
-    printf("期望:   2 3 5 8 9 100\n\n");
+    ClearList(L);
+    printf("请输入元素个数: ");
+    scanf("%d", &n);
+    for (int i = 1; i <= n; i++) {
+        printf("请输入第%d个元素: ", i);
+        scanf("%d", &e);
+        InsList(L, i, e);
+    }
+}
 
-    printf("========== 9. DelMax 删除最大值 ==========\n");
-    L = DelMax(L);
-    printf("删最大值后: "); PrintList(L);
-    printf("期望:     2 3 5 8 9\n\n");
+void ShowMenu(void) {
+    printf("\n========== 单链表操作菜单 ==========\n");
+    printf("1. 初始化/重新建立链表\n");
+    printf("2. 插入元素\n");
+    printf("3. 删除元素\n");
+    printf("4. 输出链表\n");
+    printf("5. 求链表长度\n");
+    printf("6. 按值排序\n");
+    printf("7. 逆置链表\n");
+    printf("8. 删除最大值\n");
+    printf("9. 删除最小值\n");
+    printf("10. 按序号查找\n");
+    printf("11. 按值查找\n");
+    printf("12. 合并两个有序链表\n");
+    printf("13. 按值拆分链表\n");
+    printf("14. 按次序拆分链表\n");
+    printf("15. 带序号输出链表\n");
+    printf("0. 退出\n");
+    printf("请选择: ");
+}
 
-    printf("========== 10. DelMin 删除最小值 ==========\n");
-    L = DelMin(L);
-    printf("删最小值后: "); PrintList(L);
-    printf("期望:     3 5 8 9\n\n");
+int main() {
+    LinkList L;
+    int choice, pos;
+    ElemType e, key;
+    Node *p;
 
-    printf("========== 11. ReverseList 逆置 ==========\n");
-    ReverseList(L);
-    printf("逆置后: "); PrintList(L);
-    printf("期望:   9 8 5 3\n\n");
+    if (InitList(&L) == ERROR) {
+        return ERROR;
+    }
 
-    printf("========== 12. MergeLinkList 合并有序链表 ==========\n");
-    LinkList LA, LB;
-    InitList(&LA); InitList(&LB);
-    int a[] = {1, 3, 5, 7}, b[] = {2, 4, 6};
-    BuildList(LA, a, 4); BuildList(LB, b, 3);
-    printf("LA: "); PrintList(LA);
-    printf("LB: "); PrintList(LB);
-    LA = MergeLinkList(LA, LB);
-    printf("合并: "); PrintList(LA);
-    printf("期望: 1 2 3 4 5 6 7\n\n");
+    do {
+        ShowMenu();
+        scanf("%d", &choice);
 
-    printf("========== 13. SplitListValue 按值拆分(value=4) ==========\n");
-    LinkList L1, L2;
-    InitList(&L1); InitList(&L2);
-    int sd[] = {1, 5, 2, 6, 3, 7, 4};
-    BuildList(L1, sd, 7);
-    printf("拆分前: "); PrintList(L1);
-    SplitListValue(L1, L2, 4);
-    printf("LA (<4) : "); PrintList(L1);
-    printf("LB (>=4): "); PrintList(L2);
-    printf("期望 LA: 1 2 3    LB: 5 6 7 4\n\n");
+        switch (choice) {
+            case 1:
+                InputList(L);
+                printf("当前链表: ");
+                PrintList(L);
+                break;
 
-    printf("========== 14. SplitListIndex 按次序拆分 ==========\n");
-    LinkList L3, L4;
-    InitList(&L3); InitList(&L4);
-    int si[] = {10, 20, 30, 40, 50, 60};
-    BuildList(L3, si, 6);
-    printf("拆分前: "); PrintList(L3);
-    SplitListIndex(L3, L4);
-    printf("奇数位: "); PrintList(L3);
-    printf("偶数位: "); PrintList(L4);
-    printf("期望 奇数: 10 30 50   偶数: 20 40 60\n\n");
+            case 2:
+                printf("请输入插入位置和元素值: ");
+                scanf("%d%d", &pos, &e);
+                if (InsList(L, pos, e) == OK) {
+                    printf("插入成功，当前链表: ");
+                    PrintList(L);
+                }
+                break;
 
-    printf("========== 15. PrintListWithIndex 带序号输出 ==========\n");
-    PrintListWithIndex(L3);
+            case 3:
+                printf("请输入删除位置: ");
+                scanf("%d", &pos);
+                if (DelList(L, pos, &e) == OK) {
+                    printf("删除成功，删除的值为: %d\n", e);
+                    printf("当前链表: ");
+                    PrintList(L);
+                }
+                break;
+
+            case 4:
+                printf("当前链表: ");
+                PrintList(L);
+                break;
+
+            case 5:
+                printf("链表长度为: %d\n", ListLength(L));
+                break;
+
+            case 6:
+                SortList(&L);
+                printf("排序后链表: ");
+                PrintList(L);
+                break;
+
+            case 7:
+                ReverseList(L);
+                printf("逆置后链表: ");
+                PrintList(L);
+                break;
+
+            case 8:
+                L = DelMax(L);
+                printf("删除最大值后链表: ");
+                PrintList(L);
+                break;
+
+            case 9:
+                L = DelMin(L);
+                printf("删除最小值后链表: ");
+                PrintList(L);
+                break;
+
+            case 10:
+                printf("请输入要查找的位置: ");
+                scanf("%d", &pos);
+                p = GetData(L, pos);
+                if (p) {
+                    printf("第%d个元素为: %d\n", pos, p->data);
+                } else {
+                    printf("没有找到该位置的元素。\n");
+                }
+                break;
+
+            case 11:
+                printf("请输入要查找的值: ");
+                scanf("%d", &key);
+                p = LocateData(L, key);
+                if (p) {
+                    printf("找到元素: %d\n", p->data);
+                } else {
+                    printf("没有找到该元素。\n");
+                }
+                break;
+
+            case 12: {
+                LinkList LA, LB;
+                InitList(&LA);
+                InitList(&LB);
+                printf("请输入有序链表A（从小到大）:\n");
+                InputList(LA);
+                printf("请输入有序链表B（从小到大）:\n");
+                InputList(LB);
+                ClearList(L);
+                free(L);
+                L = MergeLinkList(LA, LB);
+                printf("合并后的链表: ");
+                PrintList(L);
+                break;
+            }
+
+            case 13: {
+                LinkList LB;
+                InitList(&LB);
+                printf("请输入拆分界限值，>=该值的结点放入新链表: ");
+                scanf("%d", &key);
+                SplitListValue(L, LB, key);
+                printf("原链表中剩余元素: ");
+                PrintList(L);
+                printf("新链表中的元素: ");
+                PrintList(LB);
+                ClearList(LB);
+                free(LB);
+                break;
+            }
+
+            case 14: {
+                LinkList LB;
+                InitList(&LB);
+                SplitListIndex(L, LB);
+                printf("奇数位元素链表: ");
+                PrintList(L);
+                printf("偶数位元素链表: ");
+                PrintList(LB);
+                ClearList(LB);
+                free(LB);
+                break;
+            }
+
+            case 15:
+                PrintListWithIndex(L);
+                break;
+
+            case 0:
+                printf("程序结束。\n");
+                break;
+
+            default:
+                printf("输入有误，请重新选择。\n");
+        }
+    } while (choice != 0);
+
+    ClearList(L);
+    free(L);
     return 0;
 }
