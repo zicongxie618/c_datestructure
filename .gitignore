@@ -1,0 +1,17 @@
+# C 编译产物
+*.exe
+*.out
+*.o
+*.obj
+*.gch
+
+# VSCode 用户配置（保留团队共享的）
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/c_cpp_properties.json
+!.vscode/settings.json
+
+# 系统文件
+Thumbs.db
+.DS_Store
+Desktop.ini
